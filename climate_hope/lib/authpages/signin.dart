@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'package:climate_hope/authpages/signup.dart';
 import 'package:climate_hope/pages/dashboard.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 
@@ -81,7 +80,7 @@ class _SigninState extends State<Signin> {
             child: Container(
               decoration: const BoxDecoration(
                 image: DecorationImage(
-                  image: AssetImage('assets/images/signin_bg.png'), // Assuming you have a background image for foliage
+                  image: AssetImage('assets/images/signin_img.png'), 
                   fit: BoxFit.cover,
                 ),
               ),
@@ -95,12 +94,12 @@ class _SigninState extends State<Signin> {
                 children: [
                   const SizedBox(height: 300), 
                   Container(
-                    // This creates the white rounded card
+                    
                     margin: const EdgeInsets.symmetric(horizontal: 16.0),
                     padding: const EdgeInsets.all(24.0),
                     decoration: BoxDecoration(
-                      color: Colors.white, // Slightly transparent white card
-                      borderRadius: BorderRadius.circular(25), // Rounded corners for the card
+                      color: Colors.white, 
+                      borderRadius: BorderRadius.circular(25), 
                       boxShadow: [
                         BoxShadow(
                           color: Colors.black,
@@ -117,31 +116,31 @@ class _SigninState extends State<Signin> {
                           TextFormField(
                             controller: _emailController,
                             keyboardType: TextInputType.emailAddress,
-                            style: const TextStyle(color: Colors.white), // White text input
+                            style: const TextStyle(color: Colors.white), 
                             decoration: _inputDecoration(
-                              'username', // Changed hint to 'username' as per image
-                              Icons.person_outline, // Changed to person icon
+                              'email', 
+                              Icons.person_outline, 
                             ),
                             validator: (value) {
                               if (value == null || value.isEmpty) {
                                 return 'Please enter your username or email';
                               }
-                              // Simplified validation for username/email
+                              
                               return null;
                             },
                           ),
-                          const SizedBox(height: 16), // Spacing between fields
+                          const SizedBox(height: 16), 
                           TextFormField(
                             controller: _passwordController,
                             obscureText: _obscureText,
-                            style: const TextStyle(color: Colors.white), // White text input
+                            style: const TextStyle(color: Colors.white), 
                             decoration: _inputDecoration(
-                              'password', // Changed hint to 'password'
+                              'password', 
                               Icons.lock_outline,
                               suffixIcon: IconButton(
                                 icon: Icon(
                                   _obscureText ? Icons.visibility_off : Icons.visibility,
-                                  color: Colors.white, // White icon
+                                  color: Colors.white, 
                                 ),
                                 onPressed: () {
                                   setState(() {
@@ -154,37 +153,37 @@ class _SigninState extends State<Signin> {
                               if (value == null || value.isEmpty) {
                                 return 'Please enter your password';
                               }
-                              if (value.length < 5) { // Password length from original code
+                              if (value.length < 5) { 
                                 return 'Password must be at least 5 characters';
                               }
                               return null;
                             },
                           ),
-                          const SizedBox(height: 24), // Spacing before button
+                          const SizedBox(height: 24), 
                           SizedBox(
                             height: 50,
-                            width: double.infinity, // Button takes full width
+                            width: double.infinity, 
                             child: ElevatedButton(
                               onPressed: _isLoading ? null : save,
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.white, // White button
+                                backgroundColor: Colors.white, 
                                 shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(15), // Softer corners
-                                  side: const BorderSide(color: Colors.black, width: 1.5), // Black border
+                                  borderRadius: BorderRadius.circular(15), 
+                                  side: const BorderSide(color: Colors.black, width: 1.5), 
                                 ),
-                                elevation: 2, // Subtle shadow for depth
-                                shadowColor: Colors.black.withOpacity(0.2),
+                                elevation: 2, 
+                                shadowColor: Colors.black,
                               ),
                               child: _isLoading
                                   ? const CircularProgressIndicator(
-                                      valueColor: AlwaysStoppedAnimation<Color>(Colors.black), // Black loading spinner
+                                      valueColor: AlwaysStoppedAnimation<Color>(Colors.black), 
                                     )
                                   : Text(
-                                      "LOGIN", // All caps as per image
-                                      style: GoogleFonts.lato( // Using Lato as it's readable
+                                      "LOGIN", 
+                                      style: GoogleFonts.lato( 
                                         fontWeight: FontWeight.bold,
-                                        fontSize: 20,
-                                        color: Colors.black, // Black text for contrast
+                                        fontSize: 24,
+                                        color: Colors.black,
                                       ),
                                     ),
                             ),
@@ -193,16 +192,16 @@ class _SigninState extends State<Signin> {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 30), // Spacing below card
-                  // "Don't have an account?" section
+                  const SizedBox(height: 30), 
+                  
                   Text(
-                    "don't have an account ?", // Matches image text
+                    "don't have an account ?", 
                     style: GoogleFonts.lato(
                       fontSize: 16,
-                      color: Colors.white.withOpacity(0.8), // Slightly transparent white for background text
+                      color: Colors.white, 
                     ),
                   ),
-                  const SizedBox(height: 8), // Spacing
+                  const SizedBox(height: 8), 
                   InkWell(
                     onTap: () {
                       Navigator.push(
@@ -213,12 +212,12 @@ class _SigninState extends State<Signin> {
                       );
                     },
                     child: Text(
-                      "create a new account", // Matches image text
+                      "create a new account", 
                       style: GoogleFonts.lato(
                         fontWeight: FontWeight.bold,
                         fontSize: 18,
-                        color: Colors.white, // White text for the link
-                        decoration: TextDecoration.underline, // Underline for link
+                        color: Colors.white, 
+                        decoration: TextDecoration.underline, 
                         decorationColor: Colors.white,
                       ),
                     ),
@@ -232,37 +231,37 @@ class _SigninState extends State<Signin> {
     );
   }
 
-  // Helper function for consistent input decoration
+  
   InputDecoration _inputDecoration(String hint, IconData icon,
       {Widget? suffixIcon}) {
     return InputDecoration(
       hintText: hint,
-      hintStyle: const TextStyle(color: Colors.white70), // White hint text
-      prefixIcon: Icon(icon, color: Colors.white), // White prefix icon
-      suffixIcon: suffixIcon, // For password visibility toggle
+      hintStyle: const TextStyle(color: Colors.white70), 
+      prefixIcon: Icon(icon, color: Colors.white), 
+      suffixIcon: suffixIcon, 
       filled: true,
-      fillColor: const Color(0xFF222222), // Dark background for input fields
+      fillColor: const Color(0xFF222222), 
       contentPadding:
           const EdgeInsets.symmetric(vertical: 15.0, horizontal: 20.0),
       enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(15), // Rounded corners
-        borderSide: const BorderSide(color: Colors.white, width: 1.5), // White border
+        borderRadius: BorderRadius.circular(15), 
+        borderSide: const BorderSide(color: Colors.white, width: 1.5), 
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(15),
         borderSide: const BorderSide(
-            color: Color.fromARGB(255, 62, 218, 134), // Green highlight on focus
+            color: Color.fromARGB(255, 62, 218, 134), 
             width: 2.0),
       ),
       errorBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(15),
-        borderSide: const BorderSide(color: Colors.red, width: 1.5), // Red for errors
+        borderSide: const BorderSide(color: Colors.red, width: 1.5), 
       ),
       focusedErrorBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(15),
         borderSide: const BorderSide(color: Colors.red, width: 2.0),
       ),
-      errorStyle: const TextStyle(color: Colors.redAccent), // Error text color
+      errorStyle: const TextStyle(color: Colors.redAccent), 
     );
   }
 }

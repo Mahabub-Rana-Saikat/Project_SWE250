@@ -1,5 +1,5 @@
-import 'package:climate_hope/authpages/signin.dart';
-import 'package:climate_hope/pages/dashboard.dart';
+import 'package:climate_hope/authpages/signin.dart'; 
+//import 'package:climate_hope/pages/dashboard.dart'; 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -14,22 +14,18 @@ class SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    _navigateToHome();
+    _navigateToSignin(); 
   }
 
-  void _navigateToHome() async {
+  void _navigateToSignin() async {
   
     await Future.delayed(const Duration(seconds: 3));
-
-  
     if (!mounted) {
-      return; 
+      return;
     }
-
-    
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(builder: (context) => const Dashboard()),
+      MaterialPageRoute(builder: (context) => const Signin()), 
     );
   }
 
@@ -39,7 +35,7 @@ class SplashScreenState extends State<SplashScreen> {
       body: Container(
         decoration: const BoxDecoration(
           image: DecorationImage(
-            image: AssetImage('assets/images/climate_bg.png'),
+            image: AssetImage('assets/images/climate_bg.png'), 
             fit: BoxFit.cover,
           ),
         ),
@@ -47,7 +43,7 @@ class SplashScreenState extends State<SplashScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              const SizedBox(height: 100),
+              const SizedBox(height: 200),
               Text(
                 'Climate Hope',
                 style: GoogleFonts.aBeeZee(
