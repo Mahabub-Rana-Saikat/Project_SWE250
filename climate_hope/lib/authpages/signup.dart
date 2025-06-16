@@ -48,8 +48,7 @@ class _SignupState extends State<Signup> {
       body: jsonEncode({'email': email, 'password': password}),
     );
 
-    print("Response Status: ${res.statusCode}");
-    print("Response Body: ${res.body}");
+   
 
     if (res.statusCode == 200) {
       ScaffoldMessenger.of(context).showSnackBar(

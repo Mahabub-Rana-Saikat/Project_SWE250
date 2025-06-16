@@ -6,7 +6,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 
-
 class Signin extends StatefulWidget {
   const Signin({super.key});
 
@@ -18,6 +17,8 @@ class _SigninState extends State<Signin> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  bool _isLoading = false;
+  bool _obscureText = true; 
 
   @override
   void dispose() {
@@ -27,195 +28,199 @@ class _SigninState extends State<Signin> {
   }
 
   Future<void> save() async {
-    final url = Uri.parse('http://localhost:8000/signin');
+    if (!(_formKey.currentState?.validate() ?? false)) return;
 
-    final String email = _emailController.text.trim();
-    final String password = _passwordController.text.trim();
-
-    if (email.isEmpty || password.isEmpty) {
-      print("Fields cannot be empty!");
-      return;
-    }
+    setState(() => _isLoading = true);
 
     try {
-      final res = await http.post(
-        url,
-        headers: <String, String>{
-          'Content-Type': 'application/json; charset=UTF-8',
-        },
-        body: jsonEncode({'email': email, 'password': password}),
-      );
+      final res = await http
+          .post(
+            Uri.parse('http://10.0.2.2:5000/signin'),
+            headers: {'Content-Type': 'application/json'},
+            body: jsonEncode({
+              'email': _emailController.text.trim(),
+              'password': _passwordController.text.trim(),
+            }),
+          )
+          .timeout(const Duration(seconds: 10));
 
       if (res.statusCode == 200) {
-        print("Sign-in successful: ${res.body}");
-        Navigator.push(context, new MaterialPageRoute(builder: (context)=>Dashboard()));
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Login successful!')),
+        );
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const Dashboard()),
+        );
       } else {
-        print("Failed to sign in. Status code: ${res.statusCode}");
+        if (mounted) {
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text('Login failed: ${res.body}')));
+        }
       }
     } catch (e) {
-      print("Error: $e");
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Error: ${e.toString()}')));
+      }
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       body: Stack(
         children: [
-          /** For Top Image */
-          Positioned(
-            top: 0,
-            child: SvgPicture.asset('images/top.svg', height: 150),
+          Positioned.fill(
+            child: Container(
+              decoration: const BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage('assets/images/signin_bg.png'), // Assuming you have a background image for foliage
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
           ),
-
-          /** Form Body */
           Center(
-            child: Form(
-              key: _formKey,
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 24.0),
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  /** Signin Title */
-                  const SizedBox(height: 150),
-                  Text(
-                    "Signin",
-                    style: GoogleFonts.pacifico(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 50,
-                      color: const Color.fromARGB(255, 62, 218, 134),
-                    ),
-                  ),
-
-                  /** Gap */
-                  const SizedBox(height: 20),
-
-                  /** Email Box */
-                  Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: TextFormField(
-                      controller: _emailController,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Enter your email';
-                        }
-                        if (!RegExp(
-                          r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$",
-                        ).hasMatch(value)) {
-                          return 'Enter a valid email';
-                        }
-                        return null;
-                      },
-                      decoration: InputDecoration(
-                        hintText: 'Enter Your Email',
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(20),
-                          borderSide: const BorderSide(
-                            color: Color.fromARGB(255, 1, 39, 2),
-                          ),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(20),
-                          borderSide: const BorderSide(
-                            color: Color.fromARGB(255, 1, 39, 2),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-
-                  /** Password Box */
-                  Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: TextFormField(
-                      controller: _passwordController,
-                      obscureText: true,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Enter your password';
-                        }
-                        if (value.length <= 4) {
-                          return 'Password must be at least 5 characters';
-                        }
-                        return null;
-                      },
-                      decoration: InputDecoration(
-                        hintText: 'Enter Your Password',
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(20),
-                          borderSide: const BorderSide(
-                            color: Color.fromARGB(255, 1, 39, 2),
-                          ),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(20),
-                          borderSide: const BorderSide(
-                            color: Color.fromARGB(255, 1, 39, 2),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-
-                  /** Signin Button */
-                  Padding(
-                    padding: const EdgeInsets.all(20.0),
-                    child: SizedBox(
-                      height: 60,
-                      width: 200,
-                      child: TextButton(
-                        onPressed: () {
-                          if (_formKey.currentState?.validate() ?? false) {
-                            save(); // Call save() function
-                          } else {
-                            print("Validation failed");
-                          }
-                        },
-                        style: TextButton.styleFrom(
-                          backgroundColor: Colors.greenAccent,
-                          padding: const EdgeInsets.all(20.0),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                        ),
-                        child: Text(
-                          "Signin",
-                          style: GoogleFonts.pacifico(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 20,
-                            color: Colors.black,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(65, 20, 0, 0),
-
-                    child: Row(
-                      children: [
-                        Text(
-                          "Have Not Account ? ",
-                          style: GoogleFonts.pacifico(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 25,
-                            color: Colors.black,
-                          ),
-                        ),
-                        InkWell(
-                          onTap: () {
-                            Navigator.push(context, new MaterialPageRoute(builder: (context)=>Signup()));
-                          },
-                          child: Text(
-                            "Signup",
-                            style: GoogleFonts.pacifico(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 25,
-                              color: const Color.fromARGB(255, 2, 89, 46),
-                            ),
-                          ),
+                  const SizedBox(height: 300), 
+                  Container(
+                    // This creates the white rounded card
+                    margin: const EdgeInsets.symmetric(horizontal: 16.0),
+                    padding: const EdgeInsets.all(24.0),
+                    decoration: BoxDecoration(
+                      color: Colors.white, // Slightly transparent white card
+                      borderRadius: BorderRadius.circular(25), // Rounded corners for the card
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black,
+                          blurRadius: 10,
+                          offset: const Offset(0, 5),
                         ),
                       ],
+                    ),
+                    child: Form(
+                      key: _formKey,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min, 
+                        children: [
+                          TextFormField(
+                            controller: _emailController,
+                            keyboardType: TextInputType.emailAddress,
+                            style: const TextStyle(color: Colors.white), // White text input
+                            decoration: _inputDecoration(
+                              'username', // Changed hint to 'username' as per image
+                              Icons.person_outline, // Changed to person icon
+                            ),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please enter your username or email';
+                              }
+                              // Simplified validation for username/email
+                              return null;
+                            },
+                          ),
+                          const SizedBox(height: 16), // Spacing between fields
+                          TextFormField(
+                            controller: _passwordController,
+                            obscureText: _obscureText,
+                            style: const TextStyle(color: Colors.white), // White text input
+                            decoration: _inputDecoration(
+                              'password', // Changed hint to 'password'
+                              Icons.lock_outline,
+                              suffixIcon: IconButton(
+                                icon: Icon(
+                                  _obscureText ? Icons.visibility_off : Icons.visibility,
+                                  color: Colors.white, // White icon
+                                ),
+                                onPressed: () {
+                                  setState(() {
+                                    _obscureText = !_obscureText;
+                                  });
+                                },
+                              ),
+                            ),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please enter your password';
+                              }
+                              if (value.length < 5) { // Password length from original code
+                                return 'Password must be at least 5 characters';
+                              }
+                              return null;
+                            },
+                          ),
+                          const SizedBox(height: 24), // Spacing before button
+                          SizedBox(
+                            height: 50,
+                            width: double.infinity, // Button takes full width
+                            child: ElevatedButton(
+                              onPressed: _isLoading ? null : save,
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.white, // White button
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(15), // Softer corners
+                                  side: const BorderSide(color: Colors.black, width: 1.5), // Black border
+                                ),
+                                elevation: 2, // Subtle shadow for depth
+                                shadowColor: Colors.black.withOpacity(0.2),
+                              ),
+                              child: _isLoading
+                                  ? const CircularProgressIndicator(
+                                      valueColor: AlwaysStoppedAnimation<Color>(Colors.black), // Black loading spinner
+                                    )
+                                  : Text(
+                                      "LOGIN", // All caps as per image
+                                      style: GoogleFonts.lato( // Using Lato as it's readable
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 20,
+                                        color: Colors.black, // Black text for contrast
+                                      ),
+                                    ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 30), // Spacing below card
+                  // "Don't have an account?" section
+                  Text(
+                    "don't have an account ?", // Matches image text
+                    style: GoogleFonts.lato(
+                      fontSize: 16,
+                      color: Colors.white.withOpacity(0.8), // Slightly transparent white for background text
+                    ),
+                  ),
+                  const SizedBox(height: 8), // Spacing
+                  InkWell(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const Signup(),
+                        ),
+                      );
+                    },
+                    child: Text(
+                      "create a new account", // Matches image text
+                      style: GoogleFonts.lato(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
+                        color: Colors.white, // White text for the link
+                        decoration: TextDecoration.underline, // Underline for link
+                        decorationColor: Colors.white,
+                      ),
                     ),
                   ),
                 ],
@@ -224,6 +229,40 @@ class _SigninState extends State<Signin> {
           ),
         ],
       ),
+    );
+  }
+
+  // Helper function for consistent input decoration
+  InputDecoration _inputDecoration(String hint, IconData icon,
+      {Widget? suffixIcon}) {
+    return InputDecoration(
+      hintText: hint,
+      hintStyle: const TextStyle(color: Colors.white70), // White hint text
+      prefixIcon: Icon(icon, color: Colors.white), // White prefix icon
+      suffixIcon: suffixIcon, // For password visibility toggle
+      filled: true,
+      fillColor: const Color(0xFF222222), // Dark background for input fields
+      contentPadding:
+          const EdgeInsets.symmetric(vertical: 15.0, horizontal: 20.0),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(15), // Rounded corners
+        borderSide: const BorderSide(color: Colors.white, width: 1.5), // White border
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(15),
+        borderSide: const BorderSide(
+            color: Color.fromARGB(255, 62, 218, 134), // Green highlight on focus
+            width: 2.0),
+      ),
+      errorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(15),
+        borderSide: const BorderSide(color: Colors.red, width: 1.5), // Red for errors
+      ),
+      focusedErrorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(15),
+        borderSide: const BorderSide(color: Colors.red, width: 2.0),
+      ),
+      errorStyle: const TextStyle(color: Colors.redAccent), // Error text color
     );
   }
 }
