@@ -1,9 +1,9 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart'; 
-import 'package:http/http.dart' as http; 
+import 'package:geolocator/geolocator.dart';
+import 'package:http/http.dart' as http;
 import 'package:google_fonts/google_fonts.dart';
-import 'package:intl/intl.dart'; 
+import 'package:intl/intl.dart';
 
 // --- Weather Data Model ---
 class Weather {
@@ -38,16 +38,16 @@ class Weather {
   }
 }
 
-// --- Weather API Service ---
 class WeatherService {
-  // Replace with your OpenWeatherMap API Key
-  // Get one from https://openweathermap.org/
+
   static const String _apiKey = 'f732afe13d05b405edcf79992ad0e1bc';
-  static const String _baseUrl = 'https://api.openweathermap.org/data/2.5/weather';
+  static const String _baseUrl =
+      'https://api.openweathermap.org/data/2.5/weather';
 
   Future<Weather> getWeather(double latitude, double longitude) async {
     final uri = Uri.parse(
-        '$_baseUrl?lat=$latitude&lon=$longitude&appid=$_apiKey&units=metric'); 
+      '$_baseUrl?lat=$latitude&lon=$longitude&appid=$_apiKey&units=metric',
+    );
 
     try {
       final response = await http.get(uri);
@@ -55,17 +55,16 @@ class WeatherService {
       if (response.statusCode == 200) {
         return Weather.fromJson(jsonDecode(response.body));
       } else {
-        print("Failed to load weather: ${response.statusCode} - ${response.body}");
         throw Exception(
-            'Failed to load weather: ${response.statusCode} ${response.body}');
+          'Failed to load weather: ${response.statusCode} ${response.body}',
+        );
       }
     } catch (e) {
-      print("Error fetching weather: $e");
       throw Exception('Error fetching weather: $e');
     }
   }
 
-  // Get weather icon URL
+ 
   String getWeatherIconUrl(String iconCode) {
     return 'https://openweathermap.org/img/wn/$iconCode@2x.png';
   }
@@ -91,6 +90,7 @@ class _WeatherPageState extends State<WeatherPage> {
   }
 
   Future<void> _getCurrentLocationAndWeather() async {
+    // Initial setState is safe because initState guarantees mounted.
     setState(() {
       _isLoading = true;
       _errorMessage = null;
@@ -99,45 +99,58 @@ class _WeatherPageState extends State<WeatherPage> {
     try {
       // Check if location services are enabled
       bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      if (!mounted) return; // Crucial check after an async operation
+
       if (!serviceEnabled) {
         throw Exception('Location services are disabled. Please enable them.');
       }
 
       // Request location permissions
       LocationPermission permission = await Geolocator.checkPermission();
+      if (!mounted) return; // Crucial check after an async operation
+
       if (permission == LocationPermission.denied) {
         permission = await Geolocator.requestPermission();
+        if (!mounted) return; // Crucial check after an async operation
         if (permission == LocationPermission.denied) {
-          throw Exception('Location permissions are denied. Please grant permission in settings.');
+          throw Exception(
+            'Location permissions are denied. Please grant permission in settings.',
+          );
         }
       }
       if (permission == LocationPermission.deniedForever) {
         throw Exception(
-            'Location permissions are permanently denied. We cannot request permissions.');
+          'Location permissions are permanently denied. We cannot request permissions.',
+        );
       }
 
       // Get current position
       Position position = await Geolocator.getCurrentPosition(
-          desiredAccuracy: LocationAccuracy.high);
+        desiredAccuracy: LocationAccuracy.high,
+      );
+      if (!mounted) return; // Crucial check after an async operation
 
       // Fetch weather data using coordinates
       final weather = await _weatherService.getWeather(
         position.latitude,
         position.longitude,
       );
+      if (!mounted) return; // Crucial check after an async operation
 
       setState(() {
         _weather = weather;
       });
     } catch (e) {
+      if (!mounted) return; // Crucial check before setState in catch
       setState(() {
         _errorMessage = 'Failed to get weather: ${e.toString()}';
       });
-      print('Error in _getCurrentLocationAndWeather: $e'); // Log error for debugging
     } finally {
-      setState(() {
-        _isLoading = false;
-      });
+      if (mounted) { // Crucial check before setState in finally
+        setState(() {
+          _isLoading = false;
+        });
+      }
     }
   }
 
@@ -175,29 +188,42 @@ class _WeatherPageState extends State<WeatherPage> {
             ],
           ),
         ),
-        child: _isLoading
-            ? const Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.white)))
-            : _errorMessage != null
+        child:
+            _isLoading
+                ? const Center(
+                    child: CircularProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                    ),
+                  )
+                : _errorMessage != null
                 ? Center(
                     child: Padding(
                       padding: const EdgeInsets.all(20.0),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(Icons.error_outline, color: Colors.red, size: 50),
+                          const Icon(Icons.error_outline, color: Colors.red, size: 50),
                           const SizedBox(height: 20),
                           Text(
                             _errorMessage!,
                             textAlign: TextAlign.center,
-                            style: GoogleFonts.lato(color: Colors.white, fontSize: 18),
+                            style: GoogleFonts.lato(
+                              color: Colors.white,
+                              fontSize: 18,
+                            ),
                           ),
                           const SizedBox(height: 20),
                           ElevatedButton.icon(
                             onPressed: _getCurrentLocationAndWeather,
-                            icon: const Icon(Icons.refresh, color: Color.fromARGB(255, 1, 39, 2)),
+                            icon: const Icon(
+                              Icons.refresh,
+                              color: Color.fromARGB(255, 1, 39, 2),
+                            ),
                             label: Text(
                               'Try Again',
-                              style: GoogleFonts.lato(color: Color.fromARGB(255, 1, 39, 2)),
+                              style: GoogleFonts.lato(
+                                color: Color.fromARGB(255, 1, 39, 2),
+                              ),
                             ),
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.white,
@@ -211,106 +237,119 @@ class _WeatherPageState extends State<WeatherPage> {
                     ),
                   )
                 : _weather == null
-                    ? Center(
-                        child: Text(
-                          "No weather data available.",
-                          style: GoogleFonts.lato(color: Colors.white, fontSize: 18),
-                        ),
-                      )
-                    : SingleChildScrollView(
-                        child: Padding(
-                          padding: const EdgeInsets.all(20.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              const SizedBox(height: 30),
-                              Text(
-                                _weather!.cityName,
-                                style: GoogleFonts.lato(
-                                  fontSize: 48,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white,
-                                  shadows: [
-                                    Shadow(
-                                      blurRadius: 5.0,
-                                      color: Colors.black.withOpacity(0.3),
-                                      offset: const Offset(2.0, 2.0),
-                                    ),
-                                  ],
+                ? Center(
+                    child: Text(
+                      "No weather data available.",
+                      style: GoogleFonts.lato(color: Colors.white, fontSize: 18),
+                    ),
+                  )
+                : SingleChildScrollView(
+                    child: Padding(
+                      padding: const EdgeInsets.all(20.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          const SizedBox(height: 30),
+                          Text(
+                            _weather!.cityName,
+                            style: GoogleFonts.lato(
+                              fontSize: 48,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                              shadows: [
+                                Shadow(
+                                  blurRadius: 5.0,
+                                  color: Colors.black,
+                                  offset: const Offset(2.0, 2.0),
                                 ),
-                              ),
-                              Text(
-                                DateFormat('EEEE, MMM d, yyyy').format(DateTime.now()),
-                                style: GoogleFonts.lato(
-                                  fontSize: 18,
-                                  color: Colors.white70,
-                                ),
-                              ),
-                              const SizedBox(height: 30),
-                              // Weather Icon
-                              Image.network(
-                                _weatherService.getWeatherIconUrl(_weather!.iconCode),
-                                height: 120,
-                                width: 120,
-                                errorBuilder: (context, error, stackTrace) {
-                                  return const Icon(Icons.cloud, size: 120, color: Colors.white);
-                                },
-                              ),
-                              Text(
-                                _weather!.mainCondition,
-                                style: GoogleFonts.lato(
-                                  fontSize: 30,
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                              const SizedBox(height: 20),
-                              Text(
-                                '${_weather!.temperature.round()}°C',
-                                style: GoogleFonts.lato(
-                                  fontSize: 80,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white,
-                                  shadows: [
-                                    Shadow(
-                                      blurRadius: 10.0,
-                                      color: Colors.black.withOpacity(0.4),
-                                      offset: const Offset(3.0, 3.0),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              Text(
-                                'Feels like: ${_weather!.feelsLike.round()}°C',
-                                style: GoogleFonts.lato(
-                                  fontSize: 18,
-                                  color: Colors.white70,
-                                ),
-                              ),
-                              const SizedBox(height: 40),
-                              // Additional Weather Details Card
-                              Container(
-                                padding: const EdgeInsets.all(20),
-                                decoration: BoxDecoration(
-                                  color: Colors.white.withOpacity(0.2), // Semi-transparent white
-                                  borderRadius: BorderRadius.circular(15),
-                                  border: Border.all(color: Colors.white.withOpacity(0.4)),
-                                ),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                  children: [
-                                    _buildDetailColumn(
-                                        Icons.opacity, '${_weather!.humidity}%', 'Humidity'),
-                                    _buildDetailColumn(
-                                        Icons.speed, '${_weather!.windSpeed} m/s', 'Wind'),
-                                  ],
-                                ),
-                              ),
-                              const SizedBox(height: 40),
-                            ],
+                              ],
+                            ),
                           ),
-                        ),
+                          Text(
+                            DateFormat(
+                              'EEEE, MMM d, h:mm a',
+                            ).format(DateTime.now()),
+                            style: GoogleFonts.lato(
+                              fontSize: 18,
+                              color: Colors.white70,
+                            ),
+                          ),
+                          const SizedBox(height: 30),
+                          // Weather Icon
+                          Image.network(
+                            _weatherService.getWeatherIconUrl(_weather!.iconCode),
+                            height: 120,
+                            width: 120,
+                            errorBuilder: (context, error, stackTrace) {
+                              return const Icon(
+                                Icons.cloud,
+                                size: 120,
+                                color: Colors.white,
+                              );
+                            },
+                          ),
+                          Text(
+                            _weather!.mainCondition,
+                            style: GoogleFonts.lato(
+                              fontSize: 30,
+                              color: Colors.white,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          const SizedBox(height: 20),
+                          Text(
+                            '${_weather!.temperature.round()}°C',
+                            style: GoogleFonts.lato(
+                              fontSize: 80,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                              shadows: [
+                                Shadow(
+                                  blurRadius: 10.0,
+                                  color: Colors.black,
+                                  offset: const Offset(3.0, 3.0),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Text(
+                            'Feels like: ${_weather!.feelsLike.round()}°C',
+                            style: GoogleFonts.lato(
+                              fontSize: 18,
+                              color: Colors.white70,
+                            ),
+                          ),
+                          const SizedBox(height: 40),
+                          Container(
+                            padding: const EdgeInsets.all(20),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(15),
+                              border: Border.all(
+                                color: Colors.white,
+                              ),
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: [
+                                _buildDetailColumn(
+                                  Icons.opacity,
+                                  '${_weather!.humidity}%',
+                                  'Humidity',
+                                ),
+                                _buildDetailColumn(
+                                  Icons.speed,
+                                  '${_weather!.windSpeed} m/s',
+                                  'Wind',
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(height: 40),
+                        ],
                       ),
+                    ),
+                  ),
       ),
     );
   }
@@ -331,10 +370,7 @@ class _WeatherPageState extends State<WeatherPage> {
         ),
         Text(
           label,
-          style: GoogleFonts.lato(
-            fontSize: 14,
-            color: Colors.white70,
-          ),
+          style: GoogleFonts.lato(fontSize: 14, color: Colors.white70),
         ),
       ],
     );

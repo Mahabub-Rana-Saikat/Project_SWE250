@@ -13,30 +13,46 @@ class Signup extends StatefulWidget {
 
 class _SignupState extends State<Signup> {
   final _formKey = GlobalKey<FormState>();
+ ////////////////////////////////////////////
+ /////////////////Controller/////////////////
+ ///////////////////////////////////////////
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _addressController = TextEditingController();
+  final TextEditingController _mobileNumberController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  bool _isLoading = false; 
-  bool _obscureText = true; 
+ 
+
+  bool _isLoading = false;
+  bool _obscureText = true;
 
   @override
   void dispose() {
+    _nameController.dispose();
+    _addressController.dispose();
+    _mobileNumberController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
     super.dispose();
   }
 
   Future<void> save() async {
-
     if (!(_formKey.currentState?.validate() ?? false)) {
       return;
     }
 
+
+    if (!mounted) return;
     setState(() => _isLoading = true);
 
-    final url = Uri.parse('http://10.0.2.2:5000/signup'); 
+    final url = Uri.parse('http://10.0.2.2:5000/signup');
 
+    final String name = _nameController.text.trim();
+    final String address = _addressController.text.trim();
+    final String mobileNumber = _mobileNumberController.text.trim();
     final String email = _emailController.text.trim();
     final String password = _passwordController.text.trim();
+    final String profilePic = ''; 
 
     try {
       final res = await http.post(
@@ -44,27 +60,39 @@ class _SignupState extends State<Signup> {
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
-        body: jsonEncode({'email': email, 'password': password}),
+        body: jsonEncode({
+          'name': name,
+          'address': address,
+          'mobileNumber': mobileNumber,
+          'email': email,
+          'password': password,
+          'profilePic': profilePic, 
+        }),
       );
 
       if (!mounted) return; 
 
-      if (res.statusCode == 200) {
+      if (res.statusCode == 201) { 
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text("Sign-up successful! You can now sign in.")),
         );
-        
+
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => const Signin()),
         );
-      } else if (res.statusCode == 400) {
+      } else if (res.statusCode == 409) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Email is already registered. Try another!")),
+          SnackBar(content: Text("Registration failed: ${jsonDecode(res.body)['message']}")),
         );
-      } else {
+      } else if (res.statusCode == 400) { 
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Failed to sign up: ${res.body}")), 
+          SnackBar(content: Text("Invalid input: ${jsonDecode(res.body)['message']}")),
+        );
+      }
+      else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Failed to sign up: ${res.body}")),
         );
       }
     } catch (e) {
@@ -74,21 +102,21 @@ class _SignupState extends State<Signup> {
         );
       }
     } finally {
-      if (mounted) setState(() => _isLoading = false); 
+      if (mounted) setState(() => _isLoading = false);
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset: true, 
+      resizeToAvoidBottomInset: true,
       body: Stack(
         children: [
           Positioned.fill(
             child: Container(
               decoration: const BoxDecoration(
                 image: DecorationImage(
-                  image: AssetImage('assets/images/signin_img.png'), 
+                  image: AssetImage('assets/images/signin_img.png'),
                   fit: BoxFit.cover,
                 ),
               ),
@@ -100,8 +128,8 @@ class _SignupState extends State<Signup> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const SizedBox(height: 200), 
-                  Container( 
+                  const SizedBox(height: 100), 
+                  Container(
                     margin: const EdgeInsets.symmetric(horizontal: 16.0),
                     padding: const EdgeInsets.all(24.0),
                     decoration: BoxDecoration(
@@ -120,30 +148,84 @@ class _SignupState extends State<Signup> {
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
+                          // --- Name Field ---
+                          TextFormField(
+                            controller: _nameController,
+                            keyboardType: TextInputType.text,
+                            style: const TextStyle(color: Colors.white),
+                            decoration: _inputDecoration(
+                              'Enter Your Full Name',
+                              Icons.person_outline,
+                            ),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please enter your full name';
+                              }
+                              return null;
+                            },
+                          ),
+                          const SizedBox(height: 20),
+
+                          // --- Address Field ---
+                          TextFormField(
+                            controller: _addressController,
+                            keyboardType: TextInputType.streetAddress,
+                            style: const TextStyle(color: Colors.white),
+                            decoration: _inputDecoration(
+                              'Enter Your Address',
+                              Icons.home_outlined,
+                            ),
+                            
+                          ),
+                          const SizedBox(height: 20),
+
+                          // --- Mobile Number Field ---
+                          TextFormField(
+                            controller: _mobileNumberController,
+                            keyboardType: TextInputType.phone,
+                            style: const TextStyle(color: Colors.white),
+                            decoration: _inputDecoration(
+                              'Enter Your Mobile Number',
+                              Icons.phone_outlined,
+                            ),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please enter your mobile number';
+                              }
+                              if (!RegExp(r'^\+?[0-9]{10,15}$').hasMatch(value)) {
+                                return 'Enter a valid mobile number';
+                              }
+                              return null;
+                            },
+                          ),
+                          const SizedBox(height: 20),
+
+                          // --- Email Field ---
                           TextFormField(
                             controller: _emailController,
                             keyboardType: TextInputType.emailAddress,
-                            style: const TextStyle(color: Colors.white),  
+                            style: const TextStyle(color: Colors.white),
                             decoration: _inputDecoration(
-                              'Enter Your Email', 
+                              'Enter Your Email',
                               Icons.email_outlined,
                             ),
                             validator: (value) {
                               if (value == null || value.isEmpty) {
                                 return 'Please enter your email';
                               }
-                              if (!RegExp(
-                                      r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$")
+                              if (!RegExp(r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$")
                                   .hasMatch(value)) {
                                 return 'Please enter a valid email';
                               }
                               return null;
                             },
                           ),
-                          const SizedBox(height: 20), 
+                          const SizedBox(height: 20),
+
+                          // --- Password Field ---
                           TextFormField(
                             controller: _passwordController,
-                            obscureText: _obscureText, 
+                            obscureText: _obscureText,
                             style: const TextStyle(color: Colors.white),
                             decoration: _inputDecoration(
                               'Enter Your Password',
@@ -151,7 +233,7 @@ class _SignupState extends State<Signup> {
                               suffixIcon: IconButton(
                                 icon: Icon(
                                   _obscureText ? Icons.visibility_off : Icons.visibility,
-                                  color: const Color.fromARGB(255, 1, 39, 2), 
+                                  color: Colors.black, 
                                 ),
                                 onPressed: () {
                                   setState(() {
@@ -164,78 +246,82 @@ class _SignupState extends State<Signup> {
                               if (value == null || value.isEmpty) {
                                 return 'Please enter your password';
                               }
-                              if (value.length < 6) { 
+                              if (value.length < 6) {
                                 return 'Password must be at least 6 characters';
                               }
                               return null;
                             },
                           ),
-                          const SizedBox(height: 30), 
-                  SizedBox(
-                    height: 50, 
-                    width: double.infinity,
-                    child: ElevatedButton( 
-                      onPressed: _isLoading ? null : save, 
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.white, 
-                        shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(15), 
-                                  side: const BorderSide(color: Colors.black, width: 1.5), 
-                        ),
-                        elevation: 2, 
-                        shadowColor: Colors.black,
-                      ),
-                      child: _isLoading
-                          ? const CircularProgressIndicator(
-                              valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                            )
-                          : Text(
-                              "SignUp", 
-                              style: GoogleFonts.lato( 
+                          const SizedBox(height: 30),
+
+                          // --- Signup Button ---
+                          SizedBox(
+                            height: 50,
+                            width: double.infinity,
+                            child: ElevatedButton(
+                              onPressed: _isLoading ? null : save,
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.white,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(15),
+                                  side: const BorderSide(color: Colors.black, width: 1.5),
+                                ),
+                                elevation: 2,
+                                shadowColor: Colors.black,
+                              ),
+                              child: _isLoading
+                                  ? const CircularProgressIndicator(
+                                      valueColor: AlwaysStoppedAnimation<Color>(Colors.black),
+                                    )
+                                  : Text(
+                                      "SIGN UP",
+                                      style: GoogleFonts.lato(
                                         fontWeight: FontWeight.bold,
                                         fontSize: 24,
                                         color: Colors.black,
                                       ),
+                                    ),
                             ),
-                    ),
-                  ),
+                          ),
                         ],
                       ),
                     ),
                   ),
-                  
-                  const SizedBox(height: 30), 
+
+                  const SizedBox(height: 30),
+
+                  // --- Already have an account? Sign In text ---
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        "Already have an account? ", 
-                        style: GoogleFonts.lato( 
+                        "Already have an account? ",
+                        style: GoogleFonts.lato(
                           fontSize: 16,
                           color: Colors.white,
                         ),
                       ),
-                      const SizedBox(height: 8), 
                       InkWell(
                         onTap: () {
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => const Signin()), 
+                            MaterialPageRoute(builder: (context) => const Signin()),
                           );
                         },
                         child: Text(
-                          "Sign In", 
+                          "Sign In",
                           style: GoogleFonts.lato(
                             fontWeight: FontWeight.bold,
                             fontSize: 18,
-                            color:  Colors.white, 
-                            decoration: TextDecoration.underline, 
+                            color: Colors.white,
+                            decoration: TextDecoration.underline,
                             decorationColor: Colors.white,
                           ),
                         ),
                       ),
                     ],
                   ),
+                  const SizedBox(height: 20), 
                 ],
               ),
             ),
@@ -245,28 +331,26 @@ class _SignupState extends State<Signup> {
     );
   }
 
-  
-  InputDecoration _inputDecoration(String hint, IconData icon,
+   InputDecoration _inputDecoration(String hint, IconData icon,
       {Widget? suffixIcon}) {
     return InputDecoration(
       hintText: hint,
-      hintStyle: GoogleFonts.lato(color: Colors.white70), 
+      hintStyle: const TextStyle(color: Colors.white70), 
       prefixIcon: Icon(icon, color: Colors.white), 
       suffixIcon: suffixIcon, 
       filled: true,
-      fillColor:  const Color(0xFF222222), 
+      fillColor: const Color(0xFF222222), 
       contentPadding:
           const EdgeInsets.symmetric(vertical: 15.0, horizontal: 20.0),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(15), 
-        borderSide:
-            const BorderSide(color: Colors.white, width: 1.5), 
+        borderSide: const BorderSide(color: Colors.white, width: 1.5), 
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(15),
         borderSide: const BorderSide(
-            color: Color.fromARGB(255, 62, 218, 134),
-            width: 2.0), 
+            color: Color.fromARGB(255, 62, 218, 134), 
+            width: 2.0),
       ),
       errorBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(15),
@@ -276,7 +360,7 @@ class _SignupState extends State<Signup> {
         borderRadius: BorderRadius.circular(15),
         borderSide: const BorderSide(color: Colors.red, width: 2.0),
       ),
-      errorStyle: GoogleFonts.lato(color: Colors.redAccent), 
+      errorStyle: const TextStyle(color: Colors.redAccent), 
     );
   }
 }

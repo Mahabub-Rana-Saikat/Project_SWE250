@@ -24,10 +24,6 @@ class BottomNavBar extends StatelessWidget {
           label: 'Home',
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.search),
-          label: 'Search',
-        ),
-        BottomNavigationBarItem(
           icon: Icon(Icons.public),
           label: 'GC Hub',
         ),
@@ -38,6 +34,10 @@ class BottomNavBar extends StatelessWidget {
         BottomNavigationBarItem(
           icon: Icon(Icons.monitor_heart),
           label: 'Climate',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.person),
+          label: 'profile',
         ),
       ],
       onTap: onTap,

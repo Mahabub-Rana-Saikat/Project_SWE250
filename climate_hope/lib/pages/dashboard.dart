@@ -1,6 +1,6 @@
+import 'package:climate_hope/pages/profile_page.dart';
 import 'package:flutter/material.dart';
 import '../pages/home_page.dart';
-import '../pages/search_page.dart';
 import '../pages/gc_hub_page.dart';
 import '../pages/weather_page.dart';
 import '../pages/climate_page.dart';
@@ -22,10 +22,10 @@ class _DashboardState extends State<Dashboard> {
 
   final List<Widget> _pages = [
     HomePage(),
-    SearchPage(),
     GCHubPage(),
     WeatherPage(),
     ClimatePage(),
+    ProfilePage()
   ];
 
 
@@ -92,7 +92,7 @@ class _DashboardState extends State<Dashboard> {
       case 3:
         return "Weather Watch";
       case 4:
-        return "Climate Champion";
+        return "Profile Page";
       default:
         return "Home Page";
     }
