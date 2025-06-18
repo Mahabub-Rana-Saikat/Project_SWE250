@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class GCHubPage extends StatelessWidget {
   const GCHubPage({super.key});
@@ -33,10 +34,22 @@ class GCHubPage extends StatelessWidget {
           itemCount: options.length,
           itemBuilder: (context, index) {
             return GestureDetector(
-              onTap: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text("${options[index]['title']} Clicked")),
-                );
+              onTap: () async {
+                final String title = options[index]['title'];
+                if (title == "Resources") {
+                  final Uri url = Uri.parse("https://www.climate-resource.com");
+                  if (await canLaunchUrl(url)) {
+                    await launchUrl(url);
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text("Could not launch URL")),
+                    );
+                  }
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text("$title Clicked")),
+                  );
+                }
               },
               child: Card(
                 shape: RoundedRectangleBorder(
