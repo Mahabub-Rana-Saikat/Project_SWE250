@@ -1,9 +1,7 @@
-import 'package:climate_hope/pages/dashboard.dart';
 import 'package:climate_hope/pages/splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:climate_hope/provider/user_provider.dart'; 
-
 
 void main() {
   runApp(
@@ -26,7 +24,7 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       debugShowCheckedModeBanner: false,
-      home: const Dashboard(),
+      home: const SplashScreen(),
     );
   }
 }

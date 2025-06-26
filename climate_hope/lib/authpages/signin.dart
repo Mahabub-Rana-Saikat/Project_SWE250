@@ -242,7 +242,7 @@ class _SigninState extends State<Signin> {
                       const SizedBox(height: 8),
                       InkWell(
                         onTap: () {
-                          Navigator.push( // You'll need to update this to your Signup page
+                          Navigator.push( 
                             context,
                             MaterialPageRoute(builder: (context) => Signup()),
                           );

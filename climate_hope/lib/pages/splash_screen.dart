@@ -1,5 +1,4 @@
 import 'package:climate_hope/authpages/signin.dart'; 
-//import 'package:climate_hope/pages/dashboard.dart'; 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 

@@ -44,27 +44,27 @@ class _DashboardState extends State<Dashboard> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Row(
-          children: [
-            Icon(getPageIcon(_selectedIndex), size: 28),
-            const SizedBox(width: 8),
-            Text(getTitle(_selectedIndex)),
-          ],
-        ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.list),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => const QuickAccessPage()),
-              );
-            },
-          ),
-        ],
-      ),
+      // appBar: AppBar(
+      //   title: Row(
+      //     children: [
+      //       Icon(getPageIcon(_selectedIndex), size: 28),
+      //       const SizedBox(width: 8),
+      //       Text(getTitle(_selectedIndex)),
+      //     ],
+      //   ),
+      //   actions: [
+      //     IconButton(
+      //       icon: const Icon(Icons.list),
+      //       onPressed: () {
+      //         Navigator.push(
+      //           context,
+      //           MaterialPageRoute(
+      //               builder: (context) => const QuickAccessPage()),
+      //         );
+      //       },
+      //     ),
+      //   ],
+      // ),
       body: PageView(
         controller: _pageController,
         children: _pages,
@@ -84,13 +84,13 @@ class _DashboardState extends State<Dashboard> {
   String getTitle(int index) {
     switch (index) {
       case 0:
-        return "Home Page";
+        return "";
       case 1:
-        return "Search Page";
-      case 2:
         return "Global Climate Hub";
-      case 3:
+      case 2:
         return "Weather Watch";
+      case 3:
+        return "";
       case 4:
         return "Profile Page";
       default:
@@ -103,13 +103,13 @@ class _DashboardState extends State<Dashboard> {
       case 0:
         return Icons.home;
       case 1:
-        return Icons.search;
-      case 2:
         return Icons.public;
+      case 2:
+        return Icons.cloud;
       case 3:
         return Icons.cloud;
       case 4:
-        return Icons.eco;
+        return Icons.face;
       default:
         return Icons.home;
     }

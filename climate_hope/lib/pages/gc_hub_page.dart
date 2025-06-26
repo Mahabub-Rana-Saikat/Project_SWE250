@@ -1,3 +1,6 @@
+import 'package:climate_hope/pages/OverviewPage.dart';
+import 'package:climate_hope/pages/climate_initiatives_page.dart';
+import 'package:climate_hope/pages/impact_page.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -12,8 +15,6 @@ class GCHubPage extends StatelessWidget {
       {"title": "Initiatives", "icon": Icons.handshake, "route": "/initiatives"},
       {"title": "Impact", "icon": Icons.eco, "route": "/impact"},
       {"title": "Overview", "icon": Icons.dashboard, "route": "/overview"},
-      {"title": "Map", "icon": Icons.map, "route": "/map"},
-      {"title": "News", "icon": Icons.article, "route": "/news"},
     ];
 
 
@@ -26,8 +27,8 @@ class GCHubPage extends StatelessWidget {
         padding: const EdgeInsets.all(12.0),
         child: GridView.builder(
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2, // 2 columns
-            childAspectRatio: 1.2, // Adjusts box size
+            crossAxisCount: 2, 
+            childAspectRatio: 1.2, 
             crossAxisSpacing: 12,
             mainAxisSpacing: 12,
           ),
@@ -40,12 +41,33 @@ class GCHubPage extends StatelessWidget {
                   final Uri url = Uri.parse("https://www.climate-resource.com");
                   if (await canLaunchUrl(url)) {
                     await launchUrl(url);
-                  } else {
+                  }
+
+                  else {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(content: Text("Could not launch URL")),
                     );
                   }
-                } else {
+                } 
+                else if(title == "Initiatives"){
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const ClimateInitiativesPage(),
+                      ),
+                    );
+                  } 
+                else if(title =="Impact"){
+                  Navigator.push(context, MaterialPageRoute(
+                        builder: (context) => const ImpactPage(),
+                      ),);
+                }
+                 else if(title =="Overview"){
+                  Navigator.push(context, MaterialPageRoute(
+                        builder: (context) => const OverviewPage(),
+                      ),);
+                }
+                else {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text("$title Clicked")),
                   );
@@ -59,7 +81,7 @@ class GCHubPage extends StatelessWidget {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(options[index]['icon'], size: 50, color: Colors.teal),
+                    Icon(options[index]['icon'], size: 50, color:const Color.fromARGB(255, 17, 112, 25)),
                     const SizedBox(height: 10),
                     Text(
                       options[index]['title'],
