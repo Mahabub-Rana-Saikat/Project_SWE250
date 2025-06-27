@@ -1,4 +1,5 @@
 import 'package:climate_hope/pages/splash_screen.dart';
+import 'package:climate_hope/pages/dashboard.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:climate_hope/provider/user_provider.dart'; 
@@ -24,7 +25,7 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       debugShowCheckedModeBanner: false,
-      home: const SplashScreen(),
+      home: const Dashboard(),
     );
   }
 }
