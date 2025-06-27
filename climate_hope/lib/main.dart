@@ -2,7 +2,6 @@ import 'package:climate_hope/pages/mainpages/splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:climate_hope/provider/user_provider.dart'; 
-
 void main() {
   runApp(
     ChangeNotifierProvider(
