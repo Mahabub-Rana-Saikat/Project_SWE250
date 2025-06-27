@@ -1,4 +1,4 @@
-import 'package:climate_hope/pages/splash_screen.dart';
+import 'package:climate_hope/pages/mainpages/splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:climate_hope/provider/user_provider.dart'; 
@@ -18,11 +18,6 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Climate Hope',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
       debugShowCheckedModeBanner: false,
       home: const SplashScreen(),
     );

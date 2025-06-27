@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-// --- Placeholder for TopicDetailPage ---
-// This page displays the detailed content for each educational topic.
-// In a larger application, you might place this in its own file
-// (e.g., lib/pages/topic_detail_page.dart) and import it.
+
 class TopicDetailPage extends StatelessWidget {
   final String topicTitle;
   final String topicContent;

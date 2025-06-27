@@ -1,10 +1,10 @@
-import 'package:climate_hope/pages/profile_page.dart';
+import 'package:climate_hope/pages/mainpages/profile_page.dart';
 import 'package:flutter/material.dart';
-import '../pages/home_page.dart';
-import '../pages/gc_hub_page.dart';
-import '../pages/weather_page.dart';
-import '../pages/climate_page.dart';
-import '../pages/quick_access_page.dart';
+import '../mainpages/home_page.dart';
+import '../gc_hub_page.dart';
+import '../mainpages/weather_page.dart';
+import '../climate_page.dart';
+import 'quick_access_page.dart';
 import 'package:climate_hope/bottomnavbar/bottomnavbarscreen.dart';
 
 
@@ -44,27 +44,27 @@ class _DashboardState extends State<Dashboard> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar: AppBar(
-      //   title: Row(
-      //     children: [
-      //       Icon(getPageIcon(_selectedIndex), size: 28),
-      //       const SizedBox(width: 8),
-      //       Text(getTitle(_selectedIndex)),
-      //     ],
-      //   ),
-      //   actions: [
-      //     IconButton(
-      //       icon: const Icon(Icons.list),
-      //       onPressed: () {
-      //         Navigator.push(
-      //           context,
-      //           MaterialPageRoute(
-      //               builder: (context) => const QuickAccessPage()),
-      //         );
-      //       },
-      //     ),
-      //   ],
-      // ),
+      appBar: AppBar(
+        backgroundColor: const Color.fromARGB(255, 1, 39, 2),
+        title: Row(
+          children: [
+            Icon(getPageIcon(_selectedIndex), size: 28,color: Colors.white),
+            const SizedBox(width: 8),
+          ],
+        ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.list),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => const QuickAccessPage()),
+              );
+            },
+          ),
+        ],
+      ),
       body: PageView(
         controller: _pageController,
         children: _pages,
@@ -79,23 +79,6 @@ class _DashboardState extends State<Dashboard> {
         onTap: _onItemTapped,
       ),
     );
-  }
-
-  String getTitle(int index) {
-    switch (index) {
-      case 0:
-        return "";
-      case 1:
-        return "Global Climate Hub";
-      case 2:
-        return "Weather Watch";
-      case 3:
-        return "";
-      case 4:
-        return "Profile Page";
-      default:
-        return "Home Page";
-    }
   }
 
   IconData getPageIcon(int index) {

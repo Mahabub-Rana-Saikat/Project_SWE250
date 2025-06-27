@@ -32,12 +32,21 @@ class SplashScreenState extends State<SplashScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
+        //**************************//
+        //load a background Image //
+        //************************//
+
         decoration: const BoxDecoration(
           image: DecorationImage(
             image: AssetImage('assets/images/climate_bg.png'), 
             fit: BoxFit.cover,
           ),
         ),
+
+        //************************//
+        //Load Text on Background image//
+        //*****************************///
+        
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,

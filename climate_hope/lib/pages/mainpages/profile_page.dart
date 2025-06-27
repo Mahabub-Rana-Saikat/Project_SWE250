@@ -1,5 +1,5 @@
 import 'dart:io';
-import 'package:climate_hope/widget/build_about_me_card.dart'; // Import the updated widget
+import 'package:climate_hope/widget/build_about_me_card.dart'; 
 import 'package:climate_hope/widget/buildprofile_info_card.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -22,10 +22,7 @@ class ProfilePageState extends State<ProfilePage> {
   String userMobileNumber = "Loading...";
   String profileImageUrl = "assets/images/placeholder_profile.png";
 
-  // These will now be managed by BuildAboutMeCard, but we need to pass initial data
-  // bool isEditingAboutMe = false;
-  // final TextEditingController _aboutMeController = TextEditingController();
-
+  
   bool isLoading = false;
 
   @override
@@ -43,14 +40,10 @@ class ProfilePageState extends State<ProfilePage> {
       userAddress = user['address'] ?? "No Address Provided";
       userMobileNumber = user['mobileNumber'] ?? "No Mobile Number";
 
-      // Update local _profileImageUrl from provider's current user data
+  
       profileImageUrl = user['profilePic'] != null && user['profilePic'].isNotEmpty
           ? user['profilePic']
           : "assets/images/placeholder_profile.png";
-
-      // The _aboutMeController will now be initialized within BuildAboutMeCard,
-      // but we still get the initial 'aboutMe' text here to pass it.
-      // _aboutMeController.text = user['aboutMe'] ?? "Passionate about climate action and environmental sustainability. Working towards a greener future.";
     }
   }
 
@@ -75,25 +68,11 @@ class ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-    final userProvider = Provider.of<UserProvider>(context); // Access provider here to pass data
+    final userProvider = Provider.of<UserProvider>(context); 
     final String initialAboutMe = userProvider.currentUser?['aboutMe'] ??
         "Passionate about climate action and environmental sustainability. Working towards a greener future.";
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          "Profile",
-          style: GoogleFonts.lato(
-            fontWeight: FontWeight.bold,
-            fontSize: 24,
-            color: Colors.white,
-          ),
-        ),
-        centerTitle: true,
-        backgroundColor: const Color(0xFF222222),
-        elevation: 0,
-        iconTheme: const IconThemeData(color: Colors.white),
-      ),
       body: Stack(
         children: [
           Positioned.fill(
@@ -117,16 +96,16 @@ class ProfilePageState extends State<ProfilePage> {
                     children: [
                       CircleAvatar(
                         radius: 80,
-                        // Determine if it's a network URL or a local file path
+                      
                         backgroundImage: profileImageUrl.startsWith('http') ||
                                 profileImageUrl.startsWith('https')
                             ? NetworkImage(profileImageUrl) as ImageProvider<Object>
                             : FileImage(
                                 File(profileImageUrl),
-                              ), // Use FileImage for local paths
+                              ), 
                         backgroundColor: Colors.grey[200],
                         onBackgroundImageError: (exception, stackTrace) {
-                          // Fallback to asset image if file/network image fails to load
+                          
                           setState(() {
                             profileImageUrl = "assets/images/placeholder_profile.png";
                           });

@@ -1,23 +1,22 @@
-// lib/pages/overview_page.dart
 
 import 'package:climate_hope/pages/ClimateEducationPage.dart';
-import 'package:climate_hope/pages/home_page.dart';
+import 'package:climate_hope/pages/mainpages/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:climate_hope/pages/climate_initiatives_page.dart'; // Your climate initiatives page
-import 'package:climate_hope/pages/impact_page.dart'; // Your climate impact page
+import 'package:climate_hope/pages/climate_initiatives_page.dart'; 
+import 'package:climate_hope/pages/impact_page.dart'; 
 
 
 class OverviewPage extends StatelessWidget {
   const OverviewPage({super.key});
 
-  // Helper method for building content sections
+
   Widget _buildOverviewSection({
     required IconData icon,
     required String title,
     required String content,
     required Color iconColor,
-    required BuildContext context, // Pass context to access theme/navigator
+    required BuildContext context, 
     String? buttonText,
     Widget? navigateToPage,
   }) {
@@ -25,7 +24,7 @@ class OverviewPage extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 20.0),
       elevation: 6,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
-      color: Colors.white.withOpacity(0.95), // Slightly transparent white card
+      color: Colors.white, 
       child: Padding(
         padding: const EdgeInsets.all(20.0),
         child: Column(
