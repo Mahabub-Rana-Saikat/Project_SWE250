@@ -11,14 +11,16 @@ class FallingItemGame extends StatefulWidget {
 }
 
 class _FallingItemGameState extends State<FallingItemGame> {
-  final List<GameItem> gameItems = items; // from items.dart
+  final List<GameItem> gameItems = items;
 
   late GameItem currentItem;
   int score = 0;
   final Random random = Random();
+ 
+ //Initial phase //
 
-  bool isBoxHighlighted = false;
-  bool isDustbinHighlighted = false;
+  bool isRecycleBinHighlighted = false;
+  bool isTrashBinHighlighted = false;
 
   @override
   void initState() {
@@ -28,22 +30,19 @@ class _FallingItemGameState extends State<FallingItemGame> {
 
   void spawnNewItem() {
     if (gameItems.isEmpty) {
-      print('Error: items list is empty!');
       return;
     }
     setState(() {
       currentItem = gameItems[random.nextInt(gameItems.length)];
-      print('Spawned new item: ${currentItem.name}');
     });
   }
 
-  void handleDrop(GameItem droppedItem, bool isBox) {
-    bool correct = (isBox && droppedItem.isGood) || (!isBox && !droppedItem.isGood);
+  void handleDrop(GameItem droppedItem, bool isRecycleBin) {
+    bool correct = (isRecycleBin && droppedItem.isGood) || (!isRecycleBin && !droppedItem.isGood);
     setState(() {
-      score += correct ? 1 : -1;
-      // Reset highlights after drop
-      isBoxHighlighted = false;
-      isDustbinHighlighted = false;
+      score += correct ? 5 : -10;
+      isRecycleBinHighlighted = false;
+      isTrashBinHighlighted = false;
     });
     spawnNewItem();
   }
@@ -51,134 +50,198 @@ class _FallingItemGameState extends State<FallingItemGame> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Eco Catcher Game')),
-      body: Stack(
-        children: [
-          // Score display at top-left
-          Positioned(
-            top: 16,
-            left: 16,
-            child: Text('Score: $score', style: const TextStyle(fontSize: 24)),
+      appBar: AppBar(
+        title: const Text('Eco Catcher Game', style: TextStyle(color: Colors.white)),
+        backgroundColor: const Color.fromARGB(255, 3, 45, 25),
+        elevation: 0, 
+      ),
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [Colors.teal, Colors.lightGreen],
           ),
-
-          // Draggable item at the top center
-          Align(
-            alignment: Alignment.topCenter,
-            child: Padding(
-              padding: const EdgeInsets.only(top: 100),
-              child: Draggable<GameItem>(
-                data: currentItem,
-                feedback: Material(
-                  color: Colors.transparent,
-                  child: Transform.scale(
-                    scale: 1.2,
-                    child: _buildItem(currentItem, shadow: true),
+        ),
+        child: Stack(
+          children: [
+            Positioned(
+              top: 30, 
+              left: 20, 
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                decoration: BoxDecoration(
+                  color: Colors.white, 
+                  borderRadius: BorderRadius.circular(20), 
+                  boxShadow: [
+                    BoxShadow(
+                      color: const Color.fromARGB(255, 14, 62, 18), 
+                      blurRadius: 5,
+                      offset: const Offset(0, 3),
+                    ),
+                  ],
+                ),
+                child: Text(
+                  'Score: $score', 
+                  style: const TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.teal, 
                   ),
                 ),
-                childWhenDragging: const SizedBox(),
-                child: _buildItem(currentItem),
               ),
             ),
-          ),
 
-          // Left target (Box)
-          Align(
-            alignment: Alignment.bottomLeft,
-            child: DragTarget<GameItem>(
-              builder: (context, candidateData, rejectedData) => _buildTarget(
-                'Box',
-                Colors.green,
-                isHighlighted: isBoxHighlighted,
+           
+            Align(
+              alignment: Alignment.topCenter,
+              child: Padding(
+                padding: const EdgeInsets.only(top: 100), 
+                child: Draggable<GameItem>(
+                  data: currentItem, 
+                  feedback: Material(
+                    color: Colors.transparent, 
+                    child: Transform.scale(
+                      scale: 1.2, 
+                      child: _buildItem(currentItem, shadow: true), 
+                    ),
+                  ),
+                  childWhenDragging: const SizedBox(width: 80, height: 80), 
+                  child: _buildItem(currentItem), 
+                ),
               ),
-              onWillAccept: (item) {
-                setState(() {
-                  isBoxHighlighted = true;
-                });
-                return true;
-              },
-              onLeave: (item) {
-                setState(() {
-                  isBoxHighlighted = false;
-                });
-              },
-              onAccept: (droppedItem) => handleDrop(droppedItem, true),
             ),
-          ),
 
-          // Right target (Dustbin)
-          Align(
-            alignment: Alignment.bottomRight,
-            child: DragTarget<GameItem>(
-              builder: (context, candidateData, rejectedData) => _buildTarget(
-                'Dustbin',
-                Colors.red,
-                isHighlighted: isDustbinHighlighted,
+           
+            Align(
+              alignment: Alignment.bottomLeft,
+              child: DragTarget<GameItem>(
+                builder: (context, candidateData, rejectedData) => _buildTarget(
+                  '♻️', 
+                  'Recycle', 
+                  Colors.green.shade700, 
+                  isHighlighted: isRecycleBinHighlighted, 
+                ),
+                onWillAccept: (item) {
+                  setState(() {
+                    isRecycleBinHighlighted = true; 
+                  });
+                  return true; 
+                },
+                onLeave: (item) {
+                  setState(() {
+                    isRecycleBinHighlighted = false; 
+                  });
+                },
+                onAccept: (droppedItem) => handleDrop(droppedItem, true), 
               ),
-              onWillAccept: (item) {
-                setState(() {
-                  isDustbinHighlighted = true;
-                });
-                return true;
-              },
-              onLeave: (item) {
-                setState(() {
-                  isDustbinHighlighted = false;
-                });
-              },
-              onAccept: (droppedItem) => handleDrop(droppedItem, false),
             ),
-          ),
-        ],
+
+           
+            Align(
+              alignment: Alignment.bottomRight,
+              child: DragTarget<GameItem>(
+                builder: (context, candidateData, rejectedData) => _buildTarget(
+                  '🗑️', 
+                  'Trash', 
+                  Colors.red.shade700, 
+                  isHighlighted: isTrashBinHighlighted, 
+                ),
+                onWillAccept: (item) {
+                  
+                  setState(() {
+                    isTrashBinHighlighted = true; 
+                  });
+                  return true;
+                },
+                onLeave: (item) {
+                 
+                  setState(() {
+                    isTrashBinHighlighted = false; 
+                  });
+                },
+                onAccept: (droppedItem) => handleDrop(droppedItem, false), 
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
+
 
   Widget _buildItem(GameItem item, {bool shadow = false}) {
     return Container(
       width: 80,
       height: 80,
       decoration: BoxDecoration(
-        color: item.isGood ? Colors.green : Colors.red,
-        shape: BoxShape.circle,
+        color: item.isGood ? Colors.lightGreenAccent : Colors.deepOrangeAccent, 
+        shape: BoxShape.circle, 
         boxShadow: shadow
             ? [
-          BoxShadow(
-            color: Colors.black26,
-            blurRadius: 8,
-            offset: Offset(0, 4),
-          )
-        ]
-            : null,
+                BoxShadow(
+                  color: Colors.black, 
+                  blurRadius: 10,
+                  offset: const Offset(0, 5),
+                )
+              ]
+            : [], 
+        border: Border.all(
+          color: item.isGood ? Colors.green.shade800 : Colors.red.shade800, 
+          width: 3,
+        ),
       ),
       alignment: Alignment.center,
       child: Text(
         item.name,
-        style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        style: const TextStyle(
+          fontSize: 40, 
+          color: Colors.black87, 
+          fontWeight: FontWeight.bold,
+        ),
         textAlign: TextAlign.center,
       ),
     );
   }
 
-  Widget _buildTarget(String label, Color color, {bool isHighlighted = false}) {
-    return Container(
-      margin: const EdgeInsets.all(32),
-      width: 100,
-      height: 100,
+
+  Widget _buildTarget(String icon, String label, Color color, {bool isHighlighted = false}) {
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 200),
+      margin: const EdgeInsets.only(bottom: 100.0, left: 32.0, right: 32.0), 
+      width: isHighlighted ? 120 : 100, 
+      height: isHighlighted ? 120 : 100,
       decoration: BoxDecoration(
-        color: isHighlighted ? color.withOpacity(0.7) : color,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: isHighlighted
-            ? [
+        border: Border.all(
+          color: isHighlighted ? Colors.white : color, 
+          width: isHighlighted ? 4 : 2, 
+        ),
+        boxShadow: [
           BoxShadow(
-            color: Colors.black38,
-            blurRadius: 12,
-            offset: Offset(0, 6),
-          )
-        ]
-            : null,
+            color: Colors.black, 
+            blurRadius: isHighlighted ? 15 : 8,
+            offset: Offset(0, isHighlighted ? 8 : 4),
+          ),
+        ],
       ),
-      alignment: Alignment.center,
-      child: Text(label, style: const TextStyle(color: Colors.white, fontSize: 16)),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center, 
+        children: [
+          Text(
+            icon, 
+            style: const TextStyle(fontSize: 20, color: Colors.white),
+          ),
+          const SizedBox(height: 4), 
+          Text(
+            label, 
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

@@ -1,3 +1,4 @@
+import 'package:climate_hope/games/echogame.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:climate_hope/widget/build_action_button.dart';
@@ -30,11 +31,11 @@ Widget buildQuickActions(BuildContext context) {
             buildActionButton(
               context,
               icon: Icons.cloud,
-              label: "Local Weather",
+              label: "Echo Game",
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const WeatherPage()),
+                  MaterialPageRoute(builder: (context) => const EcoGameApp()),
                 );
               },
             ),

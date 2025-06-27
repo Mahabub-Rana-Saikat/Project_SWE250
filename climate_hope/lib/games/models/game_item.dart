@@ -1,4 +1,3 @@
-// Defines the GameItem model.
 class GameItem {
   final String name;
   final bool isGood;
