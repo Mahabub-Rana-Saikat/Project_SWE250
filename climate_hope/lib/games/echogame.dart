@@ -10,6 +10,18 @@ class EcoGameApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       home: Scaffold(
         appBar: AppBar(
+
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back),
+            color: Colors.white,
+            onPressed: () {
+
+              if (Navigator.of(context).canPop()) {
+                Navigator.of(context).pop();
+              } else {
+              }
+            },
+          ),
           title: const Text(
             "Eco Catcher Game",
             style: TextStyle(
@@ -18,7 +30,7 @@ class EcoGameApp extends StatelessWidget {
               color: Colors.white,
             ),
           ),
-          backgroundColor: Color(0xFF04180A),
+          backgroundColor: const Color(0xFF04180A),
         ),
         body: const FallingItemGame(),
       ),

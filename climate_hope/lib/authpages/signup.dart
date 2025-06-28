@@ -42,8 +42,8 @@ class _SignupState extends State<Signup> {
     if (!mounted) return;
     setState(() => _isLoading = true);
 
-    final url = Uri.parse('http://10.0.2.2:5000/signup');
-
+    //final url = Uri.parse('http://10.0.2.2:5001/signup');
+    final url = Uri.parse('http://localhost:5001/signup');
     final String name = _nameController.text.trim();
     final String address = _addressController.text.trim();
     final String mobileNumber = _mobileNumberController.text.trim();

@@ -37,8 +37,8 @@ class _SigninState extends State<Signin> {
     if (!mounted) return;
     setState(() => _isLoading = true);
 
-    final url = Uri.parse('http://10.0.2.2:5000/signin');
-
+    //final url = Uri.parse('http://10.0.2.2:5001/signin');
+    final url = Uri.parse('http://localhost:5001/signin');
     final String email = _emailController.text.trim();
     final String password = _passwordController.text.trim();
 
