@@ -1,7 +1,7 @@
-import 'dart:convert'; // For jsonDecode if simulating or using real HTTP
+import 'dart:convert'; 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:url_launcher/url_launcher.dart'; // For launching external URLs
+import 'package:url_launcher/url_launcher.dart'; 
 
 // --- Initiative Data Model ---
 class ClimateInitiative {
@@ -62,10 +62,8 @@ class _ClimateInitiativesPageState extends State<ClimateInitiativesPage> {
     });
 
     try {
-      // --- SIMULATED API CALL ---
-      // In a real application, you would replace this with an actual HTTP request
-      // using the 'http' package to a real API endpoint.
-      await Future.delayed(const Duration(seconds: 2)); // Simulate network delay
+      
+      await Future.delayed(const Duration(seconds: 2)); 
 
       const String simulatedJsonData = """
       [
@@ -173,21 +171,17 @@ class _ClimateInitiativesPageState extends State<ClimateInitiativesPage> {
           ),
         ),
         centerTitle: true,
-        backgroundColor: const Color.fromARGB(255, 62, 218, 134), // Main green
+        iconTheme: const IconThemeData(color: Colors.white),
+        backgroundColor:const Color.fromARGB(255, 1, 39, 2), 
         elevation: 0,
       ),
       body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              Color.fromARGB(255, 120, 230, 180), // Lighter green
-              Color.fromARGB(255, 62, 218, 134), // Main green
-              Color.fromARGB(255, 1, 89, 46), // Darker green
-            ],
-          ),
-        ),
+         decoration: const BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage('assets/images/signin_img.png'),
+                  fit: BoxFit.cover,
+                ),
+              ),
         child: RefreshIndicator(
           onRefresh: _fetchInitiatives,
           color: Colors.green,
@@ -257,11 +251,11 @@ class _ClimateInitiativesPageState extends State<ClimateInitiativesPage> {
                               margin: const EdgeInsets.only(bottom: 15),
                               shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(15)),
-                              color: Colors.white.withOpacity(0.95), // Slightly transparent white
+                              color: Colors.white,
                               child: InkWell(
                                 onTap: initiative.learnMoreUrl != null
                                     ? () => _launchURL(initiative.learnMoreUrl!)
-                                    : null, // Only tap if URL exists
+                                    : null, 
                                 borderRadius: BorderRadius.circular(15),
                                 child: Padding(
                                   padding: const EdgeInsets.all(16.0),

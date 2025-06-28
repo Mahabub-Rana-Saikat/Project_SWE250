@@ -1,75 +1,13 @@
-// lib/pages/impact_page.dart
-
-import 'dart:convert'; // For json decoding
+import 'dart:convert'; 
+import 'package:climate_hope/classfolder/climateclass/climateimpact.dart';
+import 'package:climate_hope/classfolder/climateclass/globalmatric.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 // --- Data Models ---
-class GlobalMetric {
-  final String label;
-  final String value;
-  final String unit;
-  final String description;
-  final String? learnMoreUrl;
 
-  GlobalMetric({
-    required this.label,
-    required this.value,
-    required this.unit,
-    required this.description,
-    this.learnMoreUrl,
-  });
 
-  factory GlobalMetric.fromJson(Map<String, dynamic> json) {
-    return GlobalMetric(
-      label: json['label'],
-      value: json['value'],
-      unit: json['unit'],
-      description: json['description'],
-      learnMoreUrl: json['learnMoreUrl'],
-    );
-  }
-}
-
-class ClimateImpactCategory {
-  final String id;
-  final String title;
-  final String description;
-  final IconData icon; // Using IconData directly
-  final String? learnMoreUrl;
-
-  ClimateImpactCategory({
-    required this.id,
-    required this.title,
-    required this.description,
-    required this.icon,
-    this.learnMoreUrl,
-  });
-
-  factory ClimateImpactCategory.fromJson(Map<String, dynamic> json) {
-    return ClimateImpactCategory(
-      id: json['id'],
-      title: json['title'],
-      description: json['description'],
-      icon: _getIconData(json['iconName']), // Convert string name to IconData
-      learnMoreUrl: json['learnMoreUrl'],
-    );
-  }
-
-  // Helper to convert string icon name to IconData
-  static IconData _getIconData(String iconName) {
-    switch (iconName) {
-      case 'thermostat': return Icons.thermostat;
-      case 'water_level': return Icons.water_drop; // Using water_drop for sea level
-      case 'thunderstorm': return Icons.thunderstorm;
-      case 'forest': return Icons.forest;
-      case 'science': return Icons.science;
-      case 'public_health': return Icons.public_outlined;
-      default: return Icons.info_outline;
-    }
-  }
-}
 
 // --- Impact Page Widget ---
 class ImpactPage extends StatefulWidget {
@@ -98,10 +36,10 @@ class _ImpactPageState extends State<ImpactPage> {
     });
 
     try {
-      // Simulate network delay
-      await Future.delayed(const Duration(seconds: 2));
+      
+      await Future.delayed(const Duration(seconds: 1));
 
-      // --- SIMULATED JSON DATA ---
+      
       const String simulatedMetricsJson = """
       [
         {
@@ -219,20 +157,16 @@ class _ImpactPageState extends State<ImpactPage> {
           ),
         ),
         centerTitle: true,
-        backgroundColor: const Color.fromARGB(255, 62, 218, 134), // Main green
+        iconTheme: const IconThemeData(color: Colors.white),
+        backgroundColor:const Color.fromARGB(255, 1, 39, 2),  
         elevation: 0,
       ),
       body: Container(
         decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              Color.fromARGB(255, 120, 230, 180), // Lighter green
-              Color.fromARGB(255, 62, 218, 134), // Main green
-              Color.fromARGB(255, 1, 89, 46), // Darker green
-            ],
-          ),
+                image: DecorationImage(
+                  image: AssetImage('assets/images/signin_img.png'),
+                  fit: BoxFit.cover,
+                ),
         ),
         child: RefreshIndicator(
           onRefresh: _fetchImpactData,
@@ -303,11 +237,11 @@ class _ImpactPageState extends State<ImpactPage> {
                               ),
                               const SizedBox(height: 15),
                               GridView.builder(
-                                shrinkWrap: true, // Important for nested GridView
-                                physics: const NeverScrollableScrollPhysics(), // Disable scrolling of inner GridView
+                                shrinkWrap: true, 
+                                physics: const NeverScrollableScrollPhysics(), 
                                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                                  crossAxisCount: 1, // One metric per row for better readability
-                                  childAspectRatio: 2.8, // Adjust height as needed
+                                  crossAxisCount: 1,
+                                  childAspectRatio: 2.8, 
                                   crossAxisSpacing: 12,
                                   mainAxisSpacing: 12,
                                 ),
@@ -318,7 +252,7 @@ class _ImpactPageState extends State<ImpactPage> {
                                     elevation: 5,
                                     shape: RoundedRectangleBorder(
                                         borderRadius: BorderRadius.circular(15)),
-                                    color: Colors.white.withOpacity(0.95),
+                                    color: Colors.white,
                                     child: InkWell(
                                       onTap: metric.learnMoreUrl != null
                                           ? () => _launchURL(metric.learnMoreUrl!)
@@ -333,7 +267,7 @@ class _ImpactPageState extends State<ImpactPage> {
                                             Text(
                                               metric.label,
                                               style: GoogleFonts.lato(
-                                                fontSize: 18,
+                                                fontSize: 12,
                                                 fontWeight: FontWeight.bold,
                                                 color: const Color.fromARGB(255, 1, 39, 2),
                                               ),
@@ -346,9 +280,9 @@ class _ImpactPageState extends State<ImpactPage> {
                                                 Text(
                                                   metric.value,
                                                   style: GoogleFonts.lato(
-                                                    fontSize: 32,
+                                                    fontSize: 20,
                                                     fontWeight: FontWeight.w900,
-                                                    color: Colors.red[700], // Highlight critical numbers
+                                                    color: Colors.red[700], 
                                                   ),
                                                 ),
                                                 Text(
@@ -410,8 +344,8 @@ class _ImpactPageState extends State<ImpactPage> {
                                 shrinkWrap: true, // Important for nested GridView
                                 physics: const NeverScrollableScrollPhysics(), // Disable scrolling of inner GridView
                                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                                  crossAxisCount: 1, // One category per row
-                                  childAspectRatio: 2.2, // Adjust height as needed
+                                  crossAxisCount: 1, 
+                                  childAspectRatio: 2.2, 
                                   crossAxisSpacing: 12,
                                   mainAxisSpacing: 12,
                                 ),
@@ -532,7 +466,7 @@ class _ImpactPageState extends State<ImpactPage> {
       elevation: 5,
       margin: const EdgeInsets.only(bottom: 12),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-      color: Colors.white.withOpacity(0.95),
+      color: Colors.white,
       child: InkWell(
         onTap: () => _launchURL(url),
         borderRadius: BorderRadius.circular(15),

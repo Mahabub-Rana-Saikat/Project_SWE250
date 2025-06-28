@@ -41,6 +41,10 @@ dependencies:
   provider: ^6.1.5
   image_picker: ^1.1.2
   url_launcher: ^6.2.5
+  lottie: ^3.3.1
+  flutter_gemini: ^3.0.0
+  flutter_dotenv: ^5.2.1
+
 
 dev_dependencies:
   flutter_test:
@@ -68,7 +72,7 @@ flutter:
   assets:
     - assets/images/climate_bg.png
     - assets/images/signin_img.png
-    
+    - .env 
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

@@ -50,11 +50,6 @@ class _FallingItemGameState extends State<FallingItemGame> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Eco Catcher Game', style: TextStyle(color: Colors.white)),
-        backgroundColor: const Color.fromARGB(255, 3, 45, 25),
-        elevation: 0, 
-      ),
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(

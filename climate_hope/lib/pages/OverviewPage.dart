@@ -40,7 +40,7 @@ class OverviewPage extends StatelessWidget {
                     style: GoogleFonts.lato(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
-                      color: const Color.fromARGB(255, 1, 39, 2), // Dark green text
+                      color: const Color.fromARGB(255, 1, 39, 2), 
                     ),
                   ),
                 ),
@@ -104,21 +104,17 @@ class OverviewPage extends StatelessWidget {
           ),
         ),
         centerTitle: true,
-        backgroundColor: const Color.fromARGB(255, 62, 218, 134), // Main green
+        iconTheme: const IconThemeData(color: Colors.white),
+        backgroundColor:const Color.fromARGB(255, 1, 39, 2), 
         elevation: 0,
       ),
       body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              Color.fromARGB(255, 120, 230, 180), // Lighter green
-              Color.fromARGB(255, 62, 218, 134), // Main green
-              Color.fromARGB(255, 1, 89, 46), // Darker green
-            ],
-          ),
-        ),
+         decoration: const BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage('assets/images/signin_img.png'),
+                  fit: BoxFit.cover,
+                ),
+              ),
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(20.0),
           child: Column(
@@ -203,7 +199,7 @@ class OverviewPage extends StatelessWidget {
                     "Stay updated with current weather conditions globally and access the latest climate-related news from around the world to keep pace with developments.",
                 iconColor: Colors.purpleAccent,
                 buttonText: "Check Weather & News",
-                navigateToPage: const HomePage(), // Your HomePage should display news and offer weather link
+                navigateToPage: const HomePage(), 
               ),
 
               const SizedBox(height: 30),

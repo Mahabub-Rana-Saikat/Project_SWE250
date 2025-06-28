@@ -35,7 +35,7 @@ class ProfilePageState extends State<ProfilePage> {
     final userProvider = Provider.of<UserProvider>(context);
     if (userProvider.currentUser != null) {
       final user = userProvider.currentUser!;
-      userName = user['name'] ?? "No Name";
+      userName = user['name'] ?? "Safu";
       userEmail = user['email'] ?? "no_email@example.com";
       userAddress = user['address'] ?? "No Address Provided";
       userMobileNumber = user['mobileNumber'] ?? "No Mobile Number";
@@ -115,12 +115,12 @@ class ProfilePageState extends State<ProfilePage> {
                         bottom: 0,
                         right: 0,
                         child: GestureDetector(
-                          onTap: _pickProfilePicture, // Call the local pick function
+                          onTap: _pickProfilePicture, 
                           child: Container(
                             height: 40,
                             width: 40,
                             decoration: BoxDecoration(
-                              color: Theme.of(context).colorScheme.primary, // Use theme primary color
+                              color: Theme.of(context).colorScheme.primary, 
                               shape: BoxShape.circle,
                               border: Border.all(color: Colors.white, width: 2),
                             ),
@@ -167,8 +167,8 @@ class ProfilePageState extends State<ProfilePage> {
                   ),
                   const SizedBox(height: 20),
 
-                  // --- About Me Section (with Edit option) ---
-                  // Now pass the initial aboutMe text to the BuildAboutMeCard widget
+                  // --- About Me Section (with Edit option) ---//
+              
                   BuildAboutMeCard(
                     initialAboutMe: initialAboutMe,
                   ),
@@ -181,7 +181,7 @@ class ProfilePageState extends State<ProfilePage> {
                       onPressed: isLoading
                           ? null
                           : () {
-                              // Clear user data from the provider on logout
+                             
                               Provider.of<UserProvider>(
                                 context,
                                 listen: false,

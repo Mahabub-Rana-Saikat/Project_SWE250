@@ -56,8 +56,8 @@ class _HomePageState extends State<HomePage> {
       if (mounted) {
         setState(() {
           _climateNews = news;
-          _cachedClimateNews = news; // Update cache
-          _cacheTimestamp = DateTime.now(); // Update cache timestamp
+          _cachedClimateNews = news; 
+          _cacheTimestamp = DateTime.now(); 
         });
       }
     } catch (e) {

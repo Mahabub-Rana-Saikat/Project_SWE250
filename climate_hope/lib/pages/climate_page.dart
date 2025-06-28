@@ -99,29 +99,11 @@ class ClimatePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          "Climate Champion",
-          style: GoogleFonts.lato(
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
-            fontSize: 24,
-          ),
-        ),
-        centerTitle: true,
-        backgroundColor: const Color.fromARGB(255, 62, 218, 134), // Main green
-        elevation: 0,
-      ),
       body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              Color.fromARGB(255, 120, 230, 180), // Lighter green
-              Color.fromARGB(255, 62, 218, 134), // Main green
-              Color.fromARGB(255, 1, 89, 46), // Darker green
-            ],
+         decoration: const BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage('assets/images/signin_img.png'),
+            fit: BoxFit.cover,
           ),
         ),
         child: SingleChildScrollView(
