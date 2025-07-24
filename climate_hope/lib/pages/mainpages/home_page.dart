@@ -1,11 +1,10 @@
 import 'package:climate_hope/widget/build_user_info_section.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:climate_hope/classfolder/newsartical.dart';
-import 'package:climate_hope/widget/build_news_card.dart';
 import 'package:climate_hope/classfolder/newsservice.dart';
 import 'package:climate_hope/widget/build_quick_action.dart';
+import 'package:climate_hope/pages/climatepage/climate_news_section.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -20,7 +19,6 @@ class _HomePageState extends State<HomePage> {
   bool _isLoadingNews = true;
   String? _newsErrorMessage;
 
-  // Static cache variables
   static List<NewsArticle>? _cachedClimateNews;
   static DateTime? _cacheTimestamp;
   static const Duration _cacheDuration = Duration(minutes: 5);
@@ -75,12 +73,6 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  Future<void> _launchUrl(String url) async {
-    final Uri uri = Uri.parse(url);
-    if (!await launchUrl(uri)) {
-      throw Exception('Could not launch $uri');
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -97,16 +89,11 @@ class _HomePageState extends State<HomePage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // --- User Info Section ---
+      
               buildUserInfoSection(),
               const SizedBox(height: 30),
-
-              // --- Quick Actions/Navigation ---//
-
               buildQuickActions(context),
               const SizedBox(height: 40),
-
-              // --- Climate News Section ---//
               Text(
                 "Latest Climate News",
                 style: GoogleFonts.lato(
@@ -123,94 +110,12 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
               const SizedBox(height: 20),
-
-              _isLoadingNews
-                  ? const Center(
-                      child: CircularProgressIndicator(
-                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                      ),
-                    )
-                  : _newsErrorMessage != null
-                      ? Center(
-                          child: Padding(
-                            padding: const EdgeInsets.all(20.0),
-                            child: Column(
-                              children: [
-                                const Icon(
-                                  Icons.error_outline,
-                                  color: Colors.red,
-                                  size: 40,
-                                ),
-                                const SizedBox(height: 10),
-                                Text(
-                                  "Failed to load news: $_newsErrorMessage",
-                                  textAlign: TextAlign.center,
-                                  style: GoogleFonts.lato(
-                                    color: Colors.white70,
-                                    fontSize: 16,
-                                  ),
-                                ),
-                                const SizedBox(height: 10),
-                                ElevatedButton.icon(
-                                  onPressed: _fetchNews,
-                                  icon: const Icon(
-                                    Icons.refresh,
-                                    color: Color.fromARGB(255, 1, 39, 2),
-                                  ),
-                                  label: Text(
-                                    'Retry News',
-                                    style: GoogleFonts.lato(
-                                      color: Color.fromARGB(255, 1, 39, 2),
-                                    ),
-                                  ),
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.white,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        )
-                      : _climateNews.isEmpty
-                          ? Center(
-                              child: Text(
-                                "No climate news available at the moment.",
-                                style: GoogleFonts.lato(
-                                  color: Colors.white70,
-                                  fontSize: 16,
-                                ),
-                              ),
-                            )
-                          : ListView.builder(
-                              physics: const NeverScrollableScrollPhysics(),
-                              shrinkWrap: true,
-                              itemCount:
-                                  _climateNews.length > 5 ? 5 : _climateNews.length,
-                              itemBuilder: (context, index) {
-                                final article = _climateNews[index];
-                                return buildNewsCard(article);
-                              },
-                            ),
-              const SizedBox(height: 20),
-              if (_climateNews.isNotEmpty)
-                Center(
-                  child: TextButton(
-                    onPressed: () {
-                      _launchUrl(
-                        'https://news.google.com/search?q=climate%20change',
-                      );
-                    },
-                    child: Text(
-                      "View More Climate News",
-                      style: GoogleFonts.lato(
-                        color: Colors.white,
-                        fontSize: 16,
-                        decoration: TextDecoration.underline,
-                        decorationColor: Colors.white,
-                      ),
-                    ),
-                  ),
-                ),
+            ClimateNewsSection(
+              isLoading: _isLoadingNews,
+              errorMessage: _newsErrorMessage,
+              climateNews: _climateNews,
+              onRetry: _fetchNews,
+            ),
             ],
           ),
         ),
